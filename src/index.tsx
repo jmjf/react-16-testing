@@ -1,19 +1,24 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import ReactDOM from 'react-dom';
+import { applyMiddleware } from "redux";
+import {configureStore} from '@reduxjs/toolkit';
+import { composeWithDevTools } from '@redux-devtools/extension';
+import { Provider } from 'react-redux';
 import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import ConnectedRoverSearch, {reducer as storeReducer} from './pages/ConnectedRoverSearch';
+import * as serviceWorker from './serviceWorker';
+import promise from 'redux-promise-middleware';
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+// NOTE: this section has been updated to work with browsers that don't have the devTools extension
+const finalCreateStore = configureStore({
+    devTools: [composeWithDevTools(applyMiddleware(promise)])}
+  );
+const store = finalCreateStore(storeReducer);
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+ReactDOM.render(<Provider store={store}><ConnectedRoverSearch /></Provider>, document.getElementById('root'));
+
+// If you want your app to work offline and load faster, you can change
+// unregister() to register() below. Note this comes with some pitfalls.
+// Learn more about service workers: https://bit.ly/CRA-PWA
+serviceWorker.unregister();
